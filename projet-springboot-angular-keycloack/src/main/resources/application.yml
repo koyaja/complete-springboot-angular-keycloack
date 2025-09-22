@@ -1,0 +1,72 @@
+# Configuration Spring Boot pour l'intégration Keycloak
+# Vidéo 6: Configuration Spring Security complète
+
+server:
+  port: 8081
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  application:
+    name: keycloak-demo
+  
+  # Configuration OAuth2 Resource Server pour Keycloak
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # URL du serveur Keycloak configuré en vidéo 4
+          # Pointe vers le realm "demo" créé précédemment
+          issuer-uri: http://localhost:8080/realms/demo
+          
+          # URL pour récupérer les clés publiques JWT
+          # Keycloak expose automatiquement ces clés pour la validation
+          jwk-set-uri: http://localhost:8080/realms/demo/protocol/openid-connect/certs
+          
+          # Configuration des audiences (optionnel mais recommandé)
+          # Vérifie que le token est destiné à notre application
+          audiences: demo-app
+
+# Configuration des logs pour le debugging
+logging:
+  level:
+    # Logs Spring Security pour comprendre le flow OAuth2
+    org.springframework.security: DEBUG
+    
+    # Logs OAuth2 pour le debugging JWT
+    org.springframework.security.oauth2: DEBUG
+    
+    # Logs JWT pour voir la validation des tokens
+    org.springframework.security.oauth2.jwt: TRACE
+    
+    # Niveau root pour l'application
+    root: INFO
+    
+    # Logs de notre application
+    com.example.keycloak: DEBUG
+    
+    # Logs des controllers REST
+    org.springframework.web: DEBUG
+
+# Configuration Actuator pour le monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Informations de l'application (pour Actuator)
+info:
+  app:
+    name: Keycloak Demo
+    description: Démonstration intégration Spring Boot + Keycloak
+    version: 1.0.0
+    author: Formation YouTube
+    module: Module 2 - Intégration Spring Boot
+    video: Vidéo 5 - Setup projet Spring Boot
