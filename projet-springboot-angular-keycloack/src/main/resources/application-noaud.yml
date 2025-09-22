@@ -1,0 +1,12 @@
+# Configuration alternative sans validation d'audience
+# Utiliser avec : mvn spring-boot:run -Dspring.profiles.active=noaud
+
+spring:
+  config:
+    import: classpath:application.yml
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Override: pas de validation d'audience
+          audiences:

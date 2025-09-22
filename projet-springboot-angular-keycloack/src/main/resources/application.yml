@@ -28,7 +28,12 @@ spring:
           
           # Configuration des audiences (optionnel mais recommandé)
           # Vérifie que le token est destiné à notre application
-          audiences: demo-app
+          # NOTE: Commenté temporairement si le client Keycloak n'inclut pas le claim aud
+          # audiences: demo-app
+          # Si vous avez l'erreur "The aud claim is not valid", vérifiez dans Keycloak :
+          # 1. Client Settings > Access Type = confidential ou public
+          # 2. Client Settings > Valid Redirect URIs configurés
+          # 3. Ou commentez cette ligne pour désactiver la validation d'audience
 
 # Configuration des logs pour le debugging
 logging:

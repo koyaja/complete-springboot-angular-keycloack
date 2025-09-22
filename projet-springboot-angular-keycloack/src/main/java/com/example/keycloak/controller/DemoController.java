@@ -1,5 +1,7 @@
 package com.example.keycloak.controller;
 
+import com.example.keycloak.service.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:4200")
 public class DemoController {
+    
+    @Autowired
+    private JwtService jwtService;
 
     /**
      * Endpoint public de test
@@ -71,18 +76,9 @@ public class DemoController {
     public ResponseEntity<Map<String, Object>> userInfo(@AuthenticationPrincipal Jwt jwt) {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Endpoint protégé - Authentification réussie !");
-        response.put("username", jwt.getClaimAsString("preferred_username"));
-        response.put("email", jwt.getClaimAsString("email"));
-        response.put("name", jwt.getClaimAsString("name"));
-        
-        // Extraction des rôles depuis realm_access
-        Map<String, Object> realmAccess = jwt.getClaim("realm_access");
-        if (realmAccess != null && realmAccess.containsKey("roles")) {
-            response.put("roles", realmAccess.get("roles"));
-        }
-        
-        response.put("token_issued_at", jwt.getIssuedAt());
-        response.put("token_expires_at", jwt.getExpiresAt());
+        response.put("user_info", jwtService.extractUserInfo(jwt));
+        response.put("is_admin", jwtService.isAdmin(jwt));
+        response.put("token_expiring_soon", jwtService.isTokenExpiringSoon(jwt, 300)); // 5 minutes
         
         return ResponseEntity.ok(response);
     }
