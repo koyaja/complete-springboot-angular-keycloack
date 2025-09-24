@@ -1,5 +1,6 @@
 package com.example.keycloak.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -29,6 +30,9 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
     
+    @Autowired
+    private JwtAuthenticationConverter jwtAuthenticationConverter;
+    
     /**
      * Configuration de la chaîne de filtres de sécurité Spring Security 6
      * Utilise le nouveau pattern avec SecurityFilterChain Bean (Spring Security 5.7+)
@@ -57,7 +61,7 @@ public class SecurityConfig {
             // Configuration OAuth2 Resource Server avec validation JWT
             // Connexion automatique à Keycloak via issuer-uri dans application.yml
             .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(Customizer.withDefaults())
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
             )
             
             // Configuration CORS pour permettre les requêtes depuis Angular

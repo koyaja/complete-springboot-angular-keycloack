@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Installation Keycloak avec Docker - Vidéo 3</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/monokai.min.css">
+    
+    <style>
+        :root {
+            --primary-bg: #1a1a2e;
+            --secondary-bg: #16213e;
+            --accent-color: #ffd700;
+            --keycloak-color: #ff6b35;
+            --docker-color: #2496ed;
+            --success-color: #2ed573;
+            --text-color: #ffffff;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+        }
+
+        .reveal .slides {
+            text-align: left;
+        }
+        
+        .reveal .slides section {
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .reveal h1 {
+            color: var(--accent-color);
+            font-size: 2.8em;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.3em;
+        }
+
+        .reveal h2 {
+            color: var(--accent-color);
+            font-size: 1.8em;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 0.2em;
+            margin-bottom: 0.5em;
+        }
+
+        .reveal h3 {
+            color: var(--keycloak-color);
+            font-size: 1.3em;
+            margin-bottom: 0.4em;
+        }
+
+        .reveal .subtitle {
+            color: var(--accent-color);
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 0.8em;
+            font-weight: 500;
+        }
+
+        .reveal .center {
+            text-align: center;
+        }
+
+        .reveal .columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .docker-cmd {
+            background: #2c2c54;
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 1.5em;
+            margin: 1em 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .docker-cmd::before {
+            content: '🐳 Docker';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--docker-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .step-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            border: 2px solid var(--accent-color);
+            border-radius: 15px;
+            padding: 1em;
+            margin: 0.8em 0;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 0.9em;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255,215,0,0.3);
+        }
+
+        .flow-step {
+            background: linear-gradient(90deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.1) 100%);
+            border-left: 4px solid var(--accent-color);
+            padding: 0.6em 1em;
+            margin: 0.4em 0;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .flow-step:hover {
+            background: linear-gradient(90deg, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.15) 100%);
+            transform: translateX(10px);
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, var(--success-color) 0%, #7bed9f 100%);
+            color: white;
+            padding: 1em;
+            border-radius: 15px;
+            margin: 1em 0;
+            box-shadow: 0 4px 12px rgba(46,213,115,0.3);
+            font-size: 0.9em;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, var(--keycloak-color) 0%, #f7931e 100%);
+            color: white;
+            padding: 1em;
+            border-radius: 15px;
+            margin: 1em 0;
+            box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+            font-size: 0.9em;
+        }
+
+        .tech-icon {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 80px;
+            font-size: 2em;
+            font-weight: bold;
+            color: white;
+            margin: 0 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .tech-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .docker-icon {
+            background: linear-gradient(135deg, var(--docker-color) 0%, #0db7ed 100%);
+        }
+
+        .keycloak-icon {
+            background: linear-gradient(135deg, var(--keycloak-color) 0%, #f7931e 100%);
+        }
+
+        .admin-icon {
+            background: linear-gradient(135deg, var(--success-color) 0%, #7bed9f 100%);
+        }
+
+        .episode-badge {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .duration-badge {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .url-display {
+            background: #2d3436;
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 0.8em;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            margin: 0.5em 0;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        .navigation-demo {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            border-radius: 12px;
+            padding: 1.5em;
+            margin: 1em 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8em;
+            margin: 0.5em 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,215,0,0.2);
+            transform: translateX(10px);
+        }
+
+        .nav-item.active {
+            background: rgba(255,215,0,0.3);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .stat-card {
+            background: white;
+            color: #333;
+            padding: 1em;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 0.8em;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0.1em 0;
+        }
+
+        .terminal-window {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 0;
+            margin: 1em 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .terminal-header {
+            background: #333;
+            padding: 0.8em;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .btn-close { background: #ff5f56; }
+        .btn-min { background: #ffbd2e; }
+        .btn-max { background: #27ca3f; }
+
+        .terminal-content {
+            padding: 1.5em;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        .command-line {
+            color: #2ed573;
+        }
+
+        .output-line {
+            color: #74b9ff;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5em 0;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            font-size: 0.9em;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-color);
+            z-index: -1;
+        }
+
+        .progress-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            line-height: 35px;
+            font-weight: bold;
+            margin-bottom: 0.3em;
+            font-size: 0.9em;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Slide 1: Titre -->
+            <section data-background="linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)">
+                <div class="episode-badge">03</div>
+                <div class="duration-badge">15 MIN</div>
+                
+                <h1 class="animate-in">🐳 INSTALLATION KEYCLOAK</h1>
+                <div class="subtitle animate-in">Docker • Interface Admin • Premier Realm</div>
+                <div class="center animate-in">
+                    <p style="font-size: 1.2em; font-style: italic; color: #74b9ff;">
+                        "De zéro à opérationnel en 5 minutes"
+                    </p>
+                    <p style="color: #ddd; margin-top: 2em;">
+                        <strong>Vidéo 3/30 • Module 1 : Fondamentaux • Série Keycloak</strong>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Slide 2: Récap vidéo précédente -->
+            <section>
+                <h2>📋 RÉCAP VIDÉO PRÉCÉDENTE</h2>
+                <div class="subtitle">L'Écosystème est Défini !</div>
+                
+                <div class="columns">
+                    <div>
+                        <h3>🏛️ KEYCLOAK</h3>
+                        <div class="flow-step">✅ Identity Provider centralisé</div>
+                        <div class="flow-step">✅ Standards OAuth 2.0/OIDC</div>
+                        <div class="flow-step">✅ Interface d'administration</div>
+                    </div>
+                    <div>
+                        <h3>🔄 ARCHITECTURE</h3>
+                        <div class="flow-step">✅ Flux d'authentification SSO</div>
+                        <div class="flow-step">✅ Rôles de chaque composant</div>
+                        <div class="flow-step">✅ Communication sécurisée</div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <h3>🎯 AUJOURD'HUI : INSTALLATION PRATIQUE</h3>
+                    <p>🚀 Keycloak opérationnel avec Docker<br>
+                    ⚙️ Interface d'administration accessible<br>
+                    🌍 Premier realm de développement créé</p>
+                </div>
+            </section>
+
+            <!-- Slide 3: Installation Docker -->
+            <section>
+                <h2>🐳 ÉTAPE 1 : INSTALLATION DOCKER</h2>
+                <div class="subtitle">Une Seule Commande pour Démarrer !</div>
+
+                <div class="docker-cmd">
+                    <pre><code class="bash">docker run -p 127.0.0.1:8080:8080 -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin123 quay.io/keycloak/keycloak:26.3.0 start-dev</code></pre>
+                </div>
+
+                <h3>🔧 PARAMÈTRES ESSENTIELS :</h3>
+                <div class="flow-step fragment">📦 <strong>Image officielle</strong> → quay.io/keycloak/keycloak:23.0</div>
+                <div class="flow-step fragment">🌐 <strong>Port mapping</strong> → 8080:8080 (local:container)</div>
+                <div class="flow-step fragment">👤 <strong>Admin user</strong> → admin / admin123</div>
+                <div class="flow-step fragment">🚀 <strong>Mode développement</strong> → start-dev (SSL désactivé)</div>
+            </section>
+
+            <!-- Slide 4: Vérification démarrage -->
+            <section>
+                <h2>⚡ ÉTAPE 2 : VÉRIFICATION DU DÉMARRAGE</h2>
+                <div class="subtitle">Logs et Première Connexion</div>
+
+                <div class="columns">
+                    <div>
+                        <h3>📊 Vérifier les logs :</h3>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <span class="terminal-btn btn-close"></span>
+                                <span class="terminal-btn btn-min"></span>
+                                <span class="terminal-btn btn-max"></span>
+                                <span style="margin-left: 1em; color: #ddd;">Terminal</span>
+                            </div>
+                            <div class="terminal-content">
+                                <div class="command-line">$ docker logs keycloak-demo</div>
+                                <div class="output-line">...Starting Keycloak...</div>
+                                <div class="output-line fragment">Keycloak started ✅</div>
+                                <div class="output-line fragment">Listening on port 8080</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🌐 Accès web :</h3>
+                        <div class="step-card">
+                            <h3>🎯 URL d'administration</h3>
+                            <div class="url-display">http://localhost:8080</div>
+                            <h3>👤 Identifiants</h3>
+                            <p><strong>User:</strong> admin<br>
+                            <strong>Password:</strong> admin123</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ IMPORTANT :</strong> Démarrage complet = 30-60 secondes<br>
+                    Attendez le message "Keycloak started" avant de vous connecter !
+                </div>
+            </section>
+
+            <!-- Slide 5: Interface d'administration -->
+            <section>
+                <h2>🏛️ ÉTAPE 3 : INTERFACE D'ADMINISTRATION</h2>
+                <div class="subtitle center">Tour Guidé de la Console Keycloak</div>
+
+                <h3>🎛️ Navigation Principale :</h3>
+                <div class="navigation-demo">
+                    <div class="nav-item active fragment">🏠 <strong>Dashboard</strong> → Vue d'ensemble et statistiques</div>
+                    <div class="nav-item fragment">👥 <strong>Users</strong> → Gestion des comptes utilisateurs</div>
+                    <div class="nav-item fragment">🏢 <strong>Groups</strong> → Organisation et hiérarchie</div>
+                    <div class="nav-item fragment">🎭 <strong>Roles</strong> → Permissions et autorisations</div>
+                    <div class="nav-item fragment">🔧 <strong>Clients</strong> → Applications OAuth/OIDC</div>
+                    <div class="nav-item fragment">⚙️ <strong>Realm Settings</strong> → Configuration globale</div>
+                </div>
+
+                <div class="center">
+                    <h3 class="pulse">🎯 MENU DE GAUCHE = VOTRE TABLEAU DE BORD SSO</h3>
+                </div>
+            </section>
+
+            <!-- Slide 6: Création du realm -->
+            <section>
+                <h2>🌍 ÉTAPE 4 : CRÉATION DU REALM "DEMO"</h2>
+                <div class="subtitle">Sortir du Realm Master !</div>
+
+                <div class="columns">
+                    <div>
+                        <h3>⚠️ Realm Master :</h3>
+                        <div class="flow-step">🔒 <strong>Administration uniquement</strong></div>
+                        <div class="flow-step">❌ <strong>Jamais pour les applications</strong></div>
+                        <div class="flow-step">🛡️ <strong>Sécurité critique</strong></div>
+                    </div>
+                    <div>
+                        <h3>✅ Realm Demo :</h3>
+                        <div class="flow-step">🎯 <strong>Applications métier</strong></div>
+                        <div class="flow-step">🧪 <strong>Tests et développement</strong></div>
+                        <div class="flow-step">🔧 <strong>Configuration libre</strong></div>
+                    </div>
+                </div>
+
+                <h3>📋 CRÉATION ÉTAPE PAR ÉTAPE :</h3>
+                <div class="progress-steps">
+                    <div class="progress-step fragment">
+                        <div class="step-number">1</div>
+                        <div>Cliquer "Master"</div>
+                    </div>
+                    <div class="progress-step fragment">
+                        <div class="step-number">2</div>
+                        <div>"Create Realm"</div>
+                    </div>
+                    <div class="progress-step fragment">
+                        <div class="step-number">3</div>
+                        <div>Nom: "demo"</div>
+                    </div>
+                    <div class="progress-step fragment">
+                        <div class="step-number">4</div>
+                        <div>"Create"</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7: Configuration initiale -->
+            <section>
+                <h2>⚙️ ÉTAPE 5 : CONFIGURATION INITIALE</h2>
+                <div class="subtitle">Paramètres Essentiels du Realm Demo</div>
+
+                <div class="columns">
+                    <div>
+                        <h3>🔧 Realm Settings :</h3>
+                        <div class="flow-step fragment">✅ <strong>Enabled :</strong> ON</div>
+                        <div class="flow-step fragment">🌐 <strong>User registration :</strong> Enabled</div>
+                        <div class="flow-step fragment">📧 <strong>Email as username :</strong> Optional</div>
+                        <div class="flow-step fragment">🔐 <strong>Login with email :</strong> Enabled</div>
+                    </div>
+                    <div>
+                        <h3>🛡️ Security Defenses :</h3>
+                        <div class="flow-step fragment">🔒 <strong>Brute force detection :</strong> ON</div>
+                        <div class="flow-step fragment">⏱️ <strong>Session timeout :</strong> 30 min</div>
+                        <div class="flow-step fragment">🔄 <strong>Refresh token :</strong> 1 day</div>
+                        <div class="flow-step fragment">🚫 <strong>Remember me :</strong> Enabled</div>
+                    </div>
+                </div>
+
+                <div class="success-box fragment">
+                    <h3>🎯 CONFIGURATION BASIQUE TERMINÉE !</h3>
+                    <p>✅ Realm "demo" opérationnel<br>
+                    ✅ Paramètres de sécurité activés<br>
+                    ✅ Prêt pour la création de clients OAuth<br>
+                    ✅ Interface accessible et fonctionnelle</p>
+                </div>
+            </section>
+
+            <!-- Slide 8: Test rapide -->
+            <section>
+                <h2>🧪 ÉTAPE 6 : TEST RAPIDE</h2>
+                <div class="subtitle">Vérification de l'Installation</div>
+
+                <div class="columns">
+                    <div>
+                        <h3>🎯 URLs de Vérification :</h3>
+                        <div class="url-display">Console Admin:<br>localhost:8080/admin</div>
+                        <div class="url-display">Realm Demo:<br>localhost:8080/realms/demo</div>
+                        
+                        <h3>✅ Signaux de Réussite :</h3>
+                        <div class="flow-step">🟢 Console accessible</div>
+                        <div class="flow-step">🟢 Realm "demo" visible</div>
+                        <div class="flow-step">🟢 Config OIDC JSON disponible</div>
+                    </div>
+                    <div>
+                        <div class="warning-box">
+                            <h3>🔍 DÉPANNAGE RAPIDE :</h3>
+                            <p>❌ <strong>Port 8080 occupé ?</strong><br>→ Changer vers 8081:8080<br><br>
+                            ❌ <strong>Container crash ?</strong><br>→ Vérifier docker logs<br><br>
+                            ❌ <strong>Accès refusé ?</strong><br>→ Attendre le démarrage complet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: Points clés -->
+            <section>
+                <h2>📚 POINTS CLÉS À RETENIR</h2>
+                <div class="subtitle center">Installation Keycloak Réussie !</div>
+
+                <div class="columns">
+                    <div>
+                        <h3>🐳 DOCKER</h3>
+                        <div class="flow-step">✅ Image officielle Keycloak 23.0</div>
+                        <div class="flow-step">✅ Mode développement activé</div>
+                        <div class="flow-step">✅ Admin configuré automatiquement</div>
+                        <div class="flow-step">✅ Port 8080 mappé correctement</div>
+                    </div>
+                    <div>
+                        <h3>🏛️ INTERFACE</h3>
+                        <div class="flow-step">✅ Console d'administration fonctionnelle</div>
+                        <div class="flow-step">✅ Navigation claire et intuitive</div>
+                        <div class="flow-step">✅ Realm "demo" créé et configuré</div>
+                        <div class="flow-step">✅ Paramètres de sécurité de base</div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <h3>🚀 VOUS AVEZ MAINTENANT :</h3>
+                    <p>🎯 Serveur Keycloak opérationnel<br>
+                    🔧 Interface d'administration accessible<br>
+                    🌍 Realm dédié aux applications<br>
+                    ✅ Base solide pour la suite !</p>
+                </div>
+            </section>
+
+            <!-- Slide 10: Prochaine étape -->
+            <section>
+                <h2>🎬 PROCHAINE ÉTAPE</h2>
+                <div class="subtitle center">Vidéo 4 : Configuration de Base Keycloak</div>
+
+                <div class="center">
+                    <div class="tech-icon docker-icon fragment">🎯</div>
+                    <div class="tech-icon keycloak-icon fragment">👤</div>
+                    <div class="tech-icon admin-icon fragment">🎭</div>
+                </div>
+
+                <h3>🔧 Au Programme :</h3>
+                <div class="stats-grid">
+                    <div class="stat-card fragment">
+                        <div class="stat-number" style="color: #007bff;">🎯</div>
+                        <div class="stat-label"><strong>Clients OAuth 2.0</strong><br>Connexion des applications</div>
+                    </div>
+                    <div class="stat-card fragment">
+                        <div class="stat-number" style="color: #28a745;">👤</div>
+                        <div class="stat-label"><strong>Premiers utilisateurs</strong><br>Comptes de test</div>
+                    </div>
+                    <div class="stat-card fragment">
+                        <div class="stat-number" style="color: #ffc107;">🎭</div>
+                        <div class="stat-label"><strong>Rôles et permissions</strong><br>Système d'autorisation</div>
+                    </div>
+                </div>
+
+                <div class="center">
+                    <h3 style="color: #74b9ff; font-size: 1.1em;">💡 TEASER : Transformer votre Keycloak en véritable Identity Provider !</h3>
+                    <p style="font-size: 1.1em; margin-top: 0.8em;">
+                        <strong>👉 Rendez-vous dans la prochaine vidéo pour la configuration avancée !</strong>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Slide 11: Merci -->
+            <section data-background="linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)">
+                <h1>🎬 MERCI POUR VOTRE ATTENTION !</h1>
+                
+                <div class="center">
+                    <h2>Likez 👍 • Abonnez-vous 🔔 • Partagez 📤</h2>
+                    
+                    <div style="margin: 2em 0;">
+                        <h3>📚 Ressources :</h3>
+                        <div class="url-display">🔗 Code source : github.com/koyaja/complete-springboot-angular-keycloack</div>
+                        <div class="url-display">📖 Docker Hub : quay.io/keycloak/keycloak</div>
+                        <div class="url-display">🎥 Playlist : Série complète Keycloak</div>
+                    </div>
+
+                    <h3>🏷️ Tags : #Keycloak #Docker #Installation #OAuth2 #SSO</h3>
+                    
+                    <p style="font-size: 1.5em; margin-top: 1em; color: var(--accent-color);">
+                        <strong>🚀 Prêt pour la configuration ? On se retrouve en vidéo 4 !</strong>
+                    </p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+
+    <script>
+        // Configuration Reveal.js
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            
+            // Plugins
+            plugins: [RevealHighlight],
+            
+            // Configuration des fragments
+            fragmentInURL: true,
+            
+            // Configuration de la navigation
+            keyboard: {
+                39: 'next', // Flèche droite
+                37: 'prev', // Flèche gauche
+                32: 'next'  // Espace
+            },
+            
+            // Configuration du thème
+            theme: 'black',
+            
+            // Configuration du timing pour les présentations automatiques
+            autoSlide: 0, // Désactivé par défaut
+            autoSlideStoppable: true,
+            
+            // Configuration de la vue d'ensemble
+            overview: true,
+            
+            // Configuration tactile
+            touch: true,
+            
+            // Configuration de l'affichage
+            width: 1920,
+            height: 1080,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 2.0
+        });
+
+        // Événements personnalisés
+        Reveal.on('ready', function() {
+            console.log('🎬 Reveal.js initialisé - Version standalone');
+            
+            // Ajouter des raccourcis clavier personnalisés
+            document.addEventListener('keydown', function(event) {
+                switch(event.key) {
+                    case 'F':
+                    case 'f':
+                        // Plein écran
+                        if (document.fullscreenElement) {
+                            document.exitFullscreen();
+                        } else {
+                            document.documentElement.requestFullscreen();
+                        }
+                        break;
+                        
+                    case 'O':
+                    case 'o':
+                        // Vue d'ensemble
+                        Reveal.toggleOverview();
+                        break;
+                        
+                    case 'P':
+                    case 'p':
+                        // Mode présentation (masquer la navigation)
+                        Reveal.configure({
+                            controls: !Reveal.getConfig().controls,
+                            progress: !Reveal.getConfig().progress
+                        });
+                        break;
+                }
+            });
+            
+            // Message de bienvenue
+            console.log('🎯 Présentation prête ! Utilisez les flèches ← → pour naviguer');
+            console.log('⌨️  Raccourcis: F=fullscreen, O=overview, P=presentation mode');
+        });
+
+        Reveal.on('slidechanged', function(event) {
+            // Log pour le suivi de progression
+            console.log(`📊 Slide ${event.indexh + 1}/${Reveal.getTotalSlides()}`);
+        });
+
+        // Export pour utilisation externe
+        window.PresentationUtils = {
+            goToSlide: function(index) {
+                Reveal.slide(index);
+            },
+            
+            getTotalSlides: function() {
+                return Reveal.getTotalSlides();
+            },
+            
+            getCurrentSlide: function() {
+                return Reveal.getIndices().h + 1;
+            },
+            
+            startAutoSlide: function(interval = 5000) {
+                Reveal.configure({ autoSlide: interval });
+            },
+            
+            stopAutoSlide: function() {
+                Reveal.configure({ autoSlide: 0 });
+            },
+            
+            // Nouvelle fonction pour le mode présentation
+            togglePresentationMode: function() {
+                Reveal.configure({
+                    controls: !Reveal.getConfig().controls,
+                    progress: !Reveal.getConfig().progress
+                });
+            }
+        };
+        
+        // Message de confirmation du chargement
+        console.log('✅ Présentation Keycloak Vidéo 3 chargée avec succès!');
+        console.log('🐳 Installation Docker + Interface Admin + Premier Realm');
+    </script>
+</body>
+</html>
