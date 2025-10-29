@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home.component';
 import { AccessDeniedComponent } from './features/access-denied/access-denied.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { AdminComponent } from './features/admin/admin.component';
 
 // Import des guards
 import { authGuard } from './core/guards/auth.guard';
@@ -32,13 +34,13 @@ export const routes: Routes = [
   // Utilisent authGuard pour vérifier que l'utilisateur est connecté
   // ========================================
 
-  // Exemple: Page Dashboard (authentification requise)
-  // {
-  //   path: 'dashboard',
-  //   component: DashboardComponent,
-  //   canActivate: [authGuard],
-  //   data: { title: 'Dashboard' }
-  // },
+  // Page Dashboard (authentification requise)
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [authGuard],
+    data: { title: 'Dashboard' }
+  },
 
   // Exemple: Page Profil (authentification requise)
   // {
@@ -53,13 +55,13 @@ export const routes: Routes = [
   // Utilisent roleGuard pour vérifier les permissions
   // ========================================
 
-  // Exemple: Page Admin (rôles ADMIN ou MANAGER requis)
-  // {
-  //   path: 'admin',
-  //   component: AdminComponent,
-  //   canActivate: [roleGuard([ROLES.ADMIN, ROLES.MANAGER])],
-  //   data: { title: 'Administration' }
-  // },
+  // Page Admin (rôle ADMIN uniquement)
+  {
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [roleGuard([ROLES.ADMIN])],
+    data: { title: 'Administration' }
+  },
 
   // Exemple: Page Settings (rôle ADMIN uniquement)
   // {

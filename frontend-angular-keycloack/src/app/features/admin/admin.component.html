@@ -1,0 +1,192 @@
+<div class="admin-container">
+  <!-- En-tête Admin -->
+  <div class="admin-header">
+    <div class="header-content">
+      <div>
+        <h1>Panneau d'Administration</h1>
+        <p class="subtitle">Gestion des utilisateurs et des rôles</p>
+      </div>
+      <div class="admin-badge">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        <span>Accès Administrateur</span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement du panneau d'administration...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="admin-content">
+    <!-- Statistiques -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon users">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.totalUsers }}</div>
+          <div class="stat-label">Utilisateurs Total</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon active">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.activeUsers }}</div>
+          <div class="stat-label">Utilisateurs Actifs</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon roles">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.totalRoles }}</div>
+          <div class="stat-label">Rôles Disponibles</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.pendingRequests }}</div>
+          <div class="stat-label">Demandes en Attente</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Rapides -->
+    <div class="card actions-card">
+      <h2>Actions Rapides</h2>
+      <div class="actions-grid">
+        <button class="action-btn primary" (click)="exportData()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Exporter les Données
+        </button>
+        <button class="action-btn secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Nouvel Utilisateur
+        </button>
+        <button class="action-btn secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Gérer les Rôles
+        </button>
+        <button class="action-btn secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          Rapports
+        </button>
+      </div>
+    </div>
+
+    <!-- Table de Gestion des Utilisateurs -->
+    <div class="card users-table-card">
+      <div class="table-header">
+        <h2>Gestion des Utilisateurs</h2>
+        <input type="text" placeholder="Rechercher un utilisateur..." class="search-input">
+      </div>
+
+      <div class="table-wrapper">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Utilisateur</th>
+              <th>Email</th>
+              <th>Rôles</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users" [class.inactive]="user.status === 'inactive'">
+              <td>{{ user.id }}</td>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar-small">{{ user.username.charAt(0).toUpperCase() }}</div>
+                  <span>{{ user.username }}</span>
+                </div>
+              </td>
+              <td>{{ user.email }}</td>
+              <td>
+                <div class="roles-cell">
+                  <span *ngFor="let role of user.roles" class="role-tag">{{ role }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="status-badge" [class.active]="user.status === 'active'" [class.inactive]="user.status === 'inactive'">
+                  {{ user.status === 'active' ? 'Actif' : 'Inactif' }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button class="icon-btn edit" (click)="editUser(user)" title="Éditer">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button class="icon-btn toggle" (click)="toggleUserStatus(user)" [title]="user.status === 'active' ? 'Désactiver' : 'Activer'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                  </button>
+                  <button class="icon-btn delete" (click)="deleteUser(user)" title="Supprimer">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Info Admin Connecté -->
+    <div class="card admin-info-card">
+      <h2>Administrateur Connecté</h2>
+      <div class="admin-profile" *ngIf="userProfile">
+        <div class="profile-row">
+          <span class="label">Nom d'utilisateur:</span>
+          <span class="value">{{ userProfile.username }}</span>
+        </div>
+        <div class="profile-row" *ngIf="userProfile.email">
+          <span class="label">Email:</span>
+          <span class="value">{{ userProfile.email }}</span>
+        </div>
+        <div class="profile-row">
+          <span class="label">Vos rôles:</span>
+          <div class="roles-list">
+            <span *ngFor="let role of userRoles" class="role-badge-admin">{{ role }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

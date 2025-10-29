@@ -1,0 +1,73 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Tableau de Bord</h1>
+    <p class="subtitle">Bienvenue dans votre espace personnel</p>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <p>Chargement...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="dashboard-content">
+    <!-- Carte Profil Utilisateur -->
+    <div class="card user-profile-card">
+      <h2>Profil Utilisateur</h2>
+      <div class="profile-info" *ngIf="userProfile">
+        <div class="info-row">
+          <span class="label">Nom d'utilisateur:</span>
+          <span class="value">{{ userProfile.username }}</span>
+        </div>
+        <div class="info-row" *ngIf="userProfile.firstName">
+          <span class="label">Prénom:</span>
+          <span class="value">{{ userProfile.firstName }}</span>
+        </div>
+        <div class="info-row" *ngIf="userProfile.lastName">
+          <span class="label">Nom:</span>
+          <span class="value">{{ userProfile.lastName }}</span>
+        </div>
+        <div class="info-row" *ngIf="userProfile.email">
+          <span class="label">Email:</span>
+          <span class="value">{{ userProfile.email }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carte Rôles -->
+    <div class="card roles-card">
+      <h2>Vos Rôles</h2>
+      <div class="roles-list">
+        <span *ngFor="let role of userRoles" class="role-badge">
+          {{ role }}
+        </span>
+        <p *ngIf="userRoles.length === 0" class="no-roles">
+          Aucun rôle assigné
+        </p>
+      </div>
+    </div>
+
+    <!-- Carte Actions Rapides -->
+    <div class="card actions-card">
+      <h2>Actions Rapides</h2>
+      <div class="actions-list">
+        <button class="btn btn-secondary" (click)="logout()">
+          Déconnexion
+        </button>
+      </div>
+    </div>
+
+    <!-- Carte Statistiques (exemple) -->
+    <div class="card stats-card">
+      <h2>Statistiques</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">{{ userRoles.length }}</div>
+          <div class="stat-label">Rôles</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">1</div>
+          <div class="stat-label">Compte Actif</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AppKeycloakService } from '../../../core/services/keycloak.service';
 import { UserProfile } from '../../models/user.model';
+import { ROLES } from '../../../core/constants/roles.constants';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   template: `
     <header class="header">
       <div class="container">
@@ -19,8 +21,13 @@ import { UserProfile } from '../../models/user.model';
           
           <!-- Navigation -->
           <nav class="nav">
-            <a href="#" class="nav-link">Accueil</a>
-            <a href="#" class="nav-link">Dashboard</a>
+            <a routerLink="/home" routerLinkActive="active" class="nav-link">Accueil</a>
+            @if (isAuthenticated) {
+              <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">Dashboard</a>
+            }
+            @if (isAdmin) {
+              <a routerLink="/admin" routerLinkActive="active" class="nav-link admin-link">Admin</a>
+            }
           </nav>
           
           <!-- User section -->
@@ -89,10 +96,31 @@ import { UserProfile } from '../../models/user.model';
       text-decoration: none;
       font-weight: 500;
       transition: opacity 0.2s;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
     }
-    
+
     .nav-link:hover {
       opacity: 0.8;
+      background-color: rgba(255,255,255,0.1);
+    }
+
+    .nav-link.active {
+      background-color: rgba(255,255,255,0.2);
+      font-weight: 600;
+    }
+
+    .nav-link.admin-link {
+      background: rgba(220, 38, 38, 0.2);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+    }
+
+    .nav-link.admin-link:hover {
+      background: rgba(220, 38, 38, 0.3);
+    }
+
+    .nav-link.admin-link.active {
+      background: rgba(220, 38, 38, 0.4);
     }
     
     .user-section {
@@ -191,6 +219,7 @@ import { UserProfile } from '../../models/user.model';
 })
 export class HeaderComponent implements OnInit {
   isAuthenticated = false;
+  isAdmin = false;
   userProfile$: Observable<UserProfile | null>;
   showDropdown = false;
 
@@ -200,6 +229,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAuthenticated = this.keycloakService.isAuthenticated();
+    this.isAdmin = this.keycloakService.hasRole(ROLES.ADMIN);
   }
 
   login(): void {
