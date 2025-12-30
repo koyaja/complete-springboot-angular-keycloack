@@ -123,13 +123,18 @@ export class AppKeycloakService {
    */
   private mapToUser(profile: any): User {
     const keycloakProfile = profile as KeycloakProfile;
-    
+    const firstName = keycloakProfile.given_name;
+    const lastName = keycloakProfile.family_name;
+    const username = keycloakProfile.preferred_username || '';
+    const fullName = [firstName, lastName].filter(Boolean).join(' ') || username;
+
     return {
       id: keycloakProfile.sub || '',
-      username: keycloakProfile.preferred_username || '',
+      username,
       email: keycloakProfile.email || '',
-      firstName: keycloakProfile.given_name,
-      lastName: keycloakProfile.family_name,
+      firstName,
+      lastName,
+      fullName,
       roles: this.getUserRoles(),
       isEmailVerified: keycloakProfile.email_verified
     };
