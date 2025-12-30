@@ -13,7 +13,7 @@ import { User } from '../../shared/models/user.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
   private keycloakService = inject(AppKeycloakService);
@@ -66,10 +66,9 @@ export class ProfileComponent implements OnInit {
    */
   private loadJwtClaims() {
     try {
-      // Accéder au token parsé de Keycloak
-      const keycloak = (this.keycloakService as any).keycloak;
-      if (keycloak && keycloak.tokenParsed) {
-        this.jwtClaims.set(keycloak.tokenParsed);
+      const tokenParsed = this.keycloakService.getTokenParsed();
+      if (tokenParsed) {
+        this.jwtClaims.set(tokenParsed);
       }
     } catch (err) {
       console.error('Erreur récupération claims JWT:', err);
@@ -81,9 +80,9 @@ export class ProfileComponent implements OnInit {
    */
   private calculateTokenExpiration() {
     try {
-      const keycloak = (this.keycloakService as any).keycloak;
-      if (keycloak && keycloak.tokenParsed && keycloak.tokenParsed.exp) {
-        const expTimestamp = keycloak.tokenParsed.exp * 1000;
+      const tokenParsed = this.keycloakService.getTokenParsed();
+      if (tokenParsed && tokenParsed.exp) {
+        const expTimestamp = tokenParsed.exp * 1000;
         this.tokenExpiration.set(new Date(expTimestamp));
 
         // Calculer le temps restant

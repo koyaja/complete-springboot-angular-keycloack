@@ -72,6 +72,20 @@ export class AppKeycloakService {
   }
 
   /**
+   * Récupère le token JWT parsé (claims)
+   */
+  getTokenParsed(): any {
+    return this.keycloak.getKeycloakInstance()?.tokenParsed || null;
+  }
+
+  /**
+   * Récupère l'instance Keycloak native
+   */
+  getKeycloakInstance(): Keycloak.KeycloakInstance | undefined {
+    return this.keycloak.getKeycloakInstance();
+  }
+
+  /**
    * Récupère les informations utilisateur depuis Keycloak
    */
   getUserInfo(): Observable<User | null> {
@@ -79,6 +93,13 @@ export class AppKeycloakService {
       return of(null);
     }
 
+    // Utiliser le token parsé pour récupérer les infos utilisateur
+    const tokenParsed = this.getTokenParsed();
+    if (tokenParsed) {
+      return of(this.mapTokenToUser(tokenParsed));
+    }
+
+    // Fallback: charger le profil depuis Keycloak
     return from(this.keycloak.loadUserProfile()).pipe(
       map(profile => this.mapToUser(profile)),
       catchError(error => {
@@ -121,7 +142,29 @@ export class AppKeycloakService {
   }
 
   /**
-   * Mappe le profil Keycloak vers notre modèle User
+   * Mappe le token JWT parsé vers notre modèle User
+   */
+  private mapTokenToUser(token: any): User {
+    const firstName = token.given_name || token.firstName || '';
+    const lastName = token.family_name || token.lastName || '';
+    const username = token.preferred_username || token.username || '';
+    const email = token.email || '';
+    const fullName = token.name || [firstName, lastName].filter(Boolean).join(' ') || username;
+
+    return {
+      id: token.sub || '',
+      username,
+      email,
+      firstName,
+      lastName,
+      fullName,
+      roles: this.getUserRoles(),
+      isEmailVerified: token.email_verified ?? false
+    };
+  }
+
+  /**
+   * Mappe le profil Keycloak vers notre modèle User (fallback)
    */
   private mapToUser(profile: any): User {
     const keycloakProfile = profile as KeycloakProfile;
