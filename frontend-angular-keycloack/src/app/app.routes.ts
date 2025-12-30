@@ -3,6 +3,7 @@ import { HomeComponent } from './features/home/home.component';
 import { AccessDeniedComponent } from './features/access-denied/access-denied.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { AdminComponent } from './features/admin/admin.component';
+import { ProfileComponent } from './features/profile/profile.component';
 
 // Import des guards
 import { authGuard } from './core/guards/auth.guard';
@@ -42,13 +43,13 @@ export const routes: Routes = [
     data: { title: 'Dashboard' }
   },
 
-  // Exemple: Page Profil (authentification requise)
-  // {
-  //   path: 'profile',
-  //   component: ProfileComponent,
-  //   canActivate: [authGuard],
-  //   data: { title: 'Mon Profil' }
-  // },
+  // Page Profil (authentification requise)
+  {
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [authGuard],
+    data: { title: 'Mon Profil' }
+  },
 
   // ========================================
   // ROUTES PROTÉGÉES PAR RÔLES

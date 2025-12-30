@@ -112,10 +112,12 @@ export class AppKeycloakService {
   }
 
   /**
-   * Obtient tous les rôles de l'utilisateur
+   * Obtient tous les rôles de l'utilisateur (sans doublons)
    */
   getUserRoles(): string[] {
-    return this.keycloak.getUserRoles();
+    const roles = this.keycloak.getUserRoles();
+    // Supprimer les doublons et retourner un tableau unique
+    return [...new Set(roles)];
   }
 
   /**

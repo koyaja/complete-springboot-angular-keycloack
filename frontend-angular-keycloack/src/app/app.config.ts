@@ -5,13 +5,14 @@ import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 
 import { routes } from './app.routes';
 import { initializeKeycloak } from './core/services/keycloak.initializer';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     
     // Import du module Keycloak Angular
     importProvidersFrom(KeycloakAngularModule),

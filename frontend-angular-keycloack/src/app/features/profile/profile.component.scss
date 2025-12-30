@@ -1,0 +1,147 @@
+/**
+ * Profile Component Styles
+ */
+
+.profile-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// Loading State
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #6c757d;
+}
+
+// Profile Card
+.profile-card {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+
+  .card-body {
+    padding: 2rem;
+  }
+}
+
+// Avatar
+.avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+// Roles Container
+.roles-container {
+  .badge {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+// Cards
+.card {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+
+  .card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+    border-radius: 10px 10px 0 0;
+
+    h5 {
+      color: #495057;
+      font-weight: 600;
+
+      i {
+        color: #667eea;
+      }
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+// Form Labels
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// JWT Claims
+.jwt-claims {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0;
+
+  code {
+    color: #10b981;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem;
+  }
+
+  .avatar-large {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+  }
+}
+
+// Dark Mode Support
+@media (prefers-color-scheme: dark) {
+  .profile-container {
+    background-color: #0f172a;
+  }
+
+  .card {
+    background-color: #1e293b;
+    color: #e2e8f0;
+
+    .card-header {
+      background-color: #334155;
+      border-bottom-color: #475569;
+
+      h5 {
+        color: #f1f5f9;
+      }
+    }
+  }
+
+  .form-label {
+    color: #94a3b8;
+  }
+}
